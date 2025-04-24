@@ -1,0 +1,29 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /notification
+spring:
+  application:
+    name: notification-service
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/notification-service?authSource=admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9094
+    consumer:
+      group-id: notification-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.studytracker.event.dto
+        spring.json.type.mapping: notification:com.studytracker.event.dto.NotificationEvent
+
+notification:
+  email:
+    brevo-url: https://api.brevo.com
+    brevo-apikey: "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"
