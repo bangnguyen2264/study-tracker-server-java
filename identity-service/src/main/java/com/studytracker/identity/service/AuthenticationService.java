@@ -81,6 +81,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(token.token)
                 .expiryTime(token.expiryDate)
+                .userId(user.getId())
                 .build();
     }
 
