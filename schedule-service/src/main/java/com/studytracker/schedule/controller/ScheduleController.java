@@ -7,18 +7,25 @@ import com.studytracker.schedule.entity.Schedule;
 import com.studytracker.schedule.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = "http://localhost:8888")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ScheduleController {
 
@@ -63,7 +70,6 @@ public class ScheduleController {
         scheduleService.deleteSchedule(id);
     }
 
-
     @GetMapping("/{id}")
     @Operation(summary = "Lấy danh muc bằng id")
     public ResponseEntity<ScheduleResponse> getScheduleById(@PathVariable("id") String id) {
@@ -74,5 +80,14 @@ public class ScheduleController {
     @GetMapping("/get-schedules-by/{userId}")
     public List<ScheduleResponse> getSchedulesByUserId(@PathVariable String userId) {
         return scheduleService.getScheduleByUserId(userId);
+    }
+    @GetMapping("/my-schedules")
+    public ApiResponse<List<ScheduleResponse>> getSchedulesByUserIdAnDate(
+            @RequestParam @NotBlank String userId,
+            @RequestParam @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date
+    ) {
+        return ApiResponse.<List<ScheduleResponse>>builder()
+                .result(scheduleService.getSchedulesByUserIdAndDate(userId, date))
+                .build();
     }
 }

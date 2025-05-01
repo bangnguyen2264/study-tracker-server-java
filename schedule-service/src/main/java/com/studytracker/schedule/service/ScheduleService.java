@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -62,5 +64,11 @@ public class ScheduleService {
         scheduleRepository.deleteById(id);
     }
 
+    public List<ScheduleResponse> getSchedulesByUserIdAndDate(String userId, Date date) {
+        log.info("Date at time {}", date);
+        List<Schedule> schedules = scheduleRepository.findSchedulesByUserIdAndDate(userId,date);
+        log.info("Found " + schedules.size() + " schedules");
+        return scheduleMapper.toScheduleResponseList(schedules);
+    }
 
 }
