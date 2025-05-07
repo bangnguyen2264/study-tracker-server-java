@@ -33,7 +33,8 @@ public class NoteService {
 
     public NoteResponse getNoteById(String id) {
          Note note = noteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Note not found"));
+                .orElseThrow(() -> new RuntimeException("Note not found")
+                        );
 
         return noteMapper.toNoteResponse(note);
     }
@@ -45,7 +46,7 @@ public class NoteService {
     }
 
     public List<NoteResponse> getNoteByUserId(String userId) {
-        List<Note> notes = noteRepository.findByUserId(userId);
+        List<Note> notes = noteRepository.findByUserIdOrderByCreatedAtDesc(userId);
         return noteMapper.toNoteResponseList(notes);
     }
 

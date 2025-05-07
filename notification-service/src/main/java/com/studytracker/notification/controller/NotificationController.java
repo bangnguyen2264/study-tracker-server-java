@@ -30,6 +30,7 @@ public class NotificationController {
                 .htmlContent(message.getBody())
                 .build());
     }
+
     @KafkaListener(topics = "user-deleted")
     public void listenUserDeletionNotification(NotificationEvent message) {
         log.info("User Deletion Message received: {}", message);

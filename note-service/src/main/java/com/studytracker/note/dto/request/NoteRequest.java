@@ -15,6 +15,6 @@ public class NoteRequest {
 
     private String title;
     private String content;
-    private List<String> tasks;
+//    private List<String> tasks;
     private String userId;
 }

@@ -90,4 +90,12 @@ public class ScheduleController {
                 .result(scheduleService.getSchedulesByUserIdAndDate(userId, date))
                 .build();
     }
+
+    @PostMapping("/schedules/add-all")
+    public ApiResponse<String> addAllSchedules( @RequestBody List<ScheduleRequest> schedules) {
+        return ApiResponse.<String>builder()
+                .result(scheduleService.addAllSchedules(schedules))
+                .build();
+
+    }
 }

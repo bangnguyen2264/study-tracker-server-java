@@ -16,8 +16,8 @@ public class NoteResponse {
     private String id;
     private String title;
     private String content;
-    private List<String> tasks;
-    private String userId;
+//    private List<String> tasks;
+//    private String userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

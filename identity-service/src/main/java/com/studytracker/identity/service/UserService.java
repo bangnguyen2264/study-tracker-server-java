@@ -3,7 +3,6 @@ package com.studytracker.identity.service;
 import java.util.HashSet;
 import java.util.List;
 
-import com.studytracker.identity.dto.request.UpdatePasswordRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.studytracker.event.dto.NotificationEvent;
 import com.studytracker.identity.constant.PredefinedRole;
+import com.studytracker.identity.dto.request.UpdatePasswordRequest;
 import com.studytracker.identity.dto.request.UserCreationRequest;
 import com.studytracker.identity.dto.request.UserUpdateRequest;
 import com.studytracker.identity.dto.response.UserResponse;
@@ -83,7 +83,7 @@ public class UserService {
         return userCreationResponse;
     }
 
-    private User getMe(){
+    private User getMe() {
         var context = SecurityContextHolder.getContext();
         String id = context.getAuthentication().getName();
         return userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -93,6 +93,7 @@ public class UserService {
         User user = getMe();
         return userMapper.toUserResponse(user);
     }
+
     public String updateMyPassword(UpdatePasswordRequest request) {
         User user = getMe();
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
@@ -105,13 +106,12 @@ public class UserService {
         userRepository.save(user);
         return "Password changed successfully";
     }
-    public String updateMyInfo(UserUpdateRequest request){
+
+    public String updateMyInfo(UserUpdateRequest request) {
         User user = getMe();
         userMapper.updateUser(user, request);
         return "success";
     }
-
-
 
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -119,13 +119,9 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
-
-
-
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(String userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         NotificationEvent notificationEvent = NotificationEvent.builder()
                 .channel("EMAIL")
@@ -152,8 +148,7 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deactivateUser(String userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         user.setActive(!user.isActive());
         userRepository.save(user);
@@ -164,11 +159,12 @@ public class UserService {
                 .channel("EMAIL")
                 .recipient(user.getEmail())
                 .subject(user.isActive() ? "Account Activated" : "Account Deactivated")
-                .body(user.isActive() ? "Your account has been activated by an administrator." : "Your account has been deactivated by an administrator.")
+                .body(
+                        user.isActive()
+                                ? "Your account has been activated by an administrator."
+                                : "Your account has been deactivated by an administrator.")
                 .build();
 
         kafkaTemplate.send("user-status-changed", notificationEvent);
     }
-
-
 }

@@ -2,12 +2,12 @@ package com.studytracker.identity.controller;
 
 import java.util.List;
 
-import com.studytracker.identity.dto.request.UpdatePasswordRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
 
 import com.studytracker.identity.dto.request.ApiResponse;
+import com.studytracker.identity.dto.request.UpdatePasswordRequest;
 import com.studytracker.identity.dto.request.UserCreationRequest;
 import com.studytracker.identity.dto.request.UserUpdateRequest;
 import com.studytracker.identity.dto.response.UserResponse;
@@ -56,12 +56,12 @@ public class UserController {
                 .result(userService.getMyInfo())
                 .build();
     }
+
     @PutMapping("/my-info")
     ApiResponse<Object> updateMyInfo(@RequestBody @Valid UserUpdateRequest request) {
-        return ApiResponse.builder()
-                .result(userService.updateMyInfo(request))
-                .build();
+        return ApiResponse.builder().result(userService.updateMyInfo(request)).build();
     }
+
     @PatchMapping("/my-info/password")
     ApiResponse<Object> updateMyInfoPassword(@RequestBody @Valid UpdatePasswordRequest request) {
         return ApiResponse.builder()
@@ -85,8 +85,6 @@ public class UserController {
     @PutMapping("/{userId}/deactivate")
     ApiResponse<String> deactivateUser(@PathVariable String userId) {
         userService.deactivateUser(userId);
-        return ApiResponse.<String>builder()
-                .result("User has been deactivated")
-                .build();
+        return ApiResponse.<String>builder().result("User has been deactivated").build();
     }
 }

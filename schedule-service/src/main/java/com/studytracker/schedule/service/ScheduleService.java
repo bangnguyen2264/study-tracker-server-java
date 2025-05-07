@@ -33,6 +33,27 @@ public class ScheduleService {
         schedule = scheduleRepository.save(schedule);
         return scheduleMapper.toScheduleResponse(schedule);
     }
+    public String addAllSchedules(List<ScheduleRequest> listRequest) {
+        if (listRequest == null || listRequest.isEmpty()) {
+            return "No schedules provided to create.";
+        }
+
+        try {
+            // Convert each ScheduleRequest to Schedule entity
+            List<Schedule> schedules = listRequest.stream()
+                    .map(scheduleMapper::toSchedule)
+                    .toList();
+
+            // Save all schedules in a batch
+            scheduleRepository.saveAll(schedules);
+
+            // Return success message
+            return String.format("Successfully created %d schedules.", listRequest.size());
+        } catch (Exception e) {
+            // Handle any errors (e.g., database issues, validation errors)
+            return String.format("Failed to create schedules: %s", e.getMessage());
+        }
+    }
 
     public ScheduleResponse getScheduleById(String id) {
          Schedule schedule = scheduleRepository.findById(id)
